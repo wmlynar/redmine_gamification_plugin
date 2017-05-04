@@ -5,6 +5,8 @@ class GamificationController < ApplicationController
 
   menu_item :project_gamification
 
+  before_filter :woj_auth_gamification, :except => :error
+
   before_filter :auth_gamification, only: [:index, :project]
   before_filter :find_project, only: [:project]
 
@@ -189,4 +191,13 @@ class GamificationController < ApplicationController
       return
     end 
   end
+
+  def woj_auth_gamification
+    if !User.current.allowed_to?({:controller => 'gamification', :action => 'index'}, nil, {:global => true})
+      flash[:error] = l(:cannot_use)
+      redirect_to action: 'error'
+      return 
+    end
+  end
+
 end

@@ -18,10 +18,10 @@ Redmine::Plugin.register :redmine_gamification_plugin do
   url 'https://github.com/mauricio-camayo/redmine_gamification_plugin'
   author_url 'https://github.com/mauricio-camayo'
 
-  permission :redmine_gamification_plugin, {:redmine_gamification_plugin => [:project]}, :public => true
+  permission :redmine_gamification_plugin, :gamification => :index, :public => true
 
-  menu :top_menu, :redmine_gamification_plugin, {controller: 'gamification', action: 'index'}, :caption => :plugin_name
-  menu :project_menu, :project_gamification, {controller: 'gamification', action: 'project'}, caption: 'Status', param: :project_id 
+  menu :top_menu, :gamification, {controller: 'gamification', action: 'index'}, :caption => :plugin_name, :if => Proc.new{User.current.allowed_to?({:controller => 'gamification', :action => 'index'}, nil, {:global => true})}
+  menu :project_menu, :gamification, {controller: 'gamification', action: 'project'}, :caption => :plugin_name, :param => :project_id, :if => Proc.new{User.current.allowed_to?({:controller => 'gamification', :action => 'index'}, nil, {:global => true})}
 
   settings :default => {'empty' => true}, :partial => 'settings/gamification_settings'
 end
